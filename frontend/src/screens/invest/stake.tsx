@@ -33,7 +33,7 @@ export function Stake() {
 
     const { usdtbalance } = await res.json();
     setUsdtBalance(usdtbalance);
-    setInvestAmount(usdtbalance); // Pre-fill with max amount
+    setInvestAmount("1"); // Pre-fill with max amount
 
     // Get interest rate
     const resp = await fetch('/api/invest/simulate', {
