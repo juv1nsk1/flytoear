@@ -1,0 +1,48 @@
+{
+    "travel": [
+        {
+            "code": "ABC123",
+            "destination": "New York",
+            "miles": 10000,
+            "customer": 1
+        },
+        {
+            "code": "ABC456",
+            "destination": "Rio de Janeiro",
+            "miles": 10000,
+            "customer": 1
+        },
+        {
+            "code": "ABC789",
+            "destination": "Paris",
+            "miles": 10000,
+            "customer": 1
+        }
+        
+    ],
+
+    "image": [
+        {
+            "destination": "New York",
+            "url": "http://127.0.0.1:4000/static/newyork.png"
+        },
+        {
+            "destination": "Rio de Janeiro",
+            "url": "http://127.0.0.1:4000/static/riodejaneiro.png"
+        },
+        {
+            "destination": "Paris",
+            "url": "http://127.0.0.1:4000/static/paris.png"
+        }
+    ],
+
+    "special": [
+        {
+            "destination": "Rio de Janeiro",
+            "date": "02/2025",
+            "url": "http://127.0.0.1:4000/static/riodejaneiro-carnival.png"
+        }
+    ]
+
+    
+}
