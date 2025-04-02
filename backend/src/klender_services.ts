@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import config from "../config.json";
 import { convertValue, convertValueToIntStr } from "./utils";
-import { simulateBorrow, getTokenBalance, doBorrow, doRepay, getLoan } from "./connector";
+import { simulateBorrow, getTokenBalance, doBorrow, doRepay, getLoan, getPoolID } from "./connector";
 
 // router for services
 const servicesLender = Router();
@@ -27,9 +27,12 @@ servicesLender.post("/simulate", async (req: Request, res: Response) => {
 // Get the token balances (FLYM and USDT) for the test customer
 servicesLender.get("/balance", async (req: Request, res: Response) => {
 
+  let TOKEN_FLYM_POOL_ID = await getPoolID("FLYM");
+  let TOKEN_USDT_POOL_ID = await getPoolID("USDT");
+
   // Fetch token balances using the second customer in config
-  const flymbalance = await getTokenBalance(config.TOKEN_FLYM_POOL_ID, config.customer[1]);
-  const usdtbalance = await getTokenBalance(config.TOKEN_USDT_POOL_ID, config.customer[1]);
+  const flymbalance = await getTokenBalance(TOKEN_FLYM_POOL_ID, config.customer[1]);
+  const usdtbalance = await getTokenBalance(TOKEN_USDT_POOL_ID, config.customer[1]);
 
   // Extract and convert balances 
   const usd = usdtbalance.length > 0 ? convertValue(usdtbalance[0].balance) : "0";

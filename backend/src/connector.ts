@@ -8,6 +8,42 @@ const firefly = new FireFly({
   namespace: config.NAMESPACE,
 });
 
+// Fetch contract addresses for Klender and Kinvest
+let KLENDER_ADDRESS = "";
+let KINVEST_ADDRESS = "";
+
+(async () => {
+   KLENDER_ADDRESS = await getContratAddress(flyconfig.KLENDER_API);
+})();
+
+(async () => {
+  KLENDER_ADDRESS = await getContratAddress(flyconfig.KINVEST_API);
+})();
+
+// Fetch pool ids for flym and usdt
+let TOKEN_FLYM_POOL_ID = "";
+let TOKEN_USDT_POOL_ID = "";
+
+(async () => {
+  const pools = await getPoolsID();
+  TOKEN_FLYM_POOL_ID = pools.TOKEN_FLYM_POOL_ID;
+  TOKEN_USDT_POOL_ID = pools.TOKEN_USDT_POOL_ID;
+})();
+
+
+export async function getPoolsID(): Promise<any> {
+  const TOKEN_FLYP_POOL_ID = await getPoolID("FLYP");
+  const TOKEN_FLYM_POOL_ID = await getPoolID("FLYM");
+  const TOKEN_USDT_POOL_ID = await getPoolID("USDT");
+
+  return {
+    TOKEN_FLYP_POOL_ID,
+    TOKEN_FLYM_POOL_ID,
+    TOKEN_USDT_POOL_ID,
+  };
+}
+
+
 /**
  * Mint fungible tokens to a specific address.
  * @param pool - The token pool ID.
@@ -82,7 +118,7 @@ export async function simulateBorrow(amount: string): Promise<any> {
  * @returns True if successful, false otherwise.
  */
 export async function doBorrow(borrower: string, amount: string): Promise<boolean> {
-  const response = await approveTransfer(config.TOKEN_FLYM_POOL_ID, borrower, config.KLENDER_ADDRESS);
+  const response = await approveTransfer(TOKEN_FLYM_POOL_ID, borrower, KLENDER_ADDRESS);
   //console.log("approval:", response);
   try {
     const response = await firefly.invokeContractAPI(flyconfig.KLENDER_API, "borrow", {
@@ -145,7 +181,7 @@ export async function approveTransfer(pool: string, from: string, to: string): P
  * @returns True if repayment succeeded, false otherwise.
  */
 export async function doRepay(borrower: string): Promise<boolean> {
-  await approveTransfer(config.TOKEN_USDT_POOL_ID, borrower, config.KLENDER_ADDRESS);
+  await approveTransfer(TOKEN_USDT_POOL_ID, borrower, KLENDER_ADDRESS);
   try {
     const response = await firefly.invokeContractAPI(flyconfig.KLENDER_API, "repay", {
       input: {},
@@ -220,7 +256,7 @@ export async function getInterestRate(): Promise<any> {
  * @returns True if successful, false otherwise.
  */
 export async function doStake(investor: string, amount: string): Promise<boolean> {
-  const response = await approveTransfer(config.TOKEN_USDT_POOL_ID, investor, config.KINVEST_ADDRESS);
+  const response = await approveTransfer(TOKEN_USDT_POOL_ID, investor, KINVEST_ADDRESS);
   //console.log("approval:", response);
   try {
     const response = await firefly.invokeContractAPI(flyconfig.KINVEST_API, "stake", {
@@ -262,7 +298,7 @@ export async function getStake(investor: string): Promise<any> {
  * @returns True if successful, false otherwise.
  */
 export async function doUnstake(investor: string): Promise<boolean> {
-  await approveTransfer(config.TOKEN_USDT_POOL_ID, investor, config.KINVEST_ADDRESS);
+  await approveTransfer(TOKEN_USDT_POOL_ID, investor, KINVEST_ADDRESS);
   try {
     const response = await firefly.invokeContractAPI(flyconfig.KINVEST_API, "unstake", {
       input: {},
@@ -275,14 +311,23 @@ export async function doUnstake(investor: string): Promise<boolean> {
   }
 }
 
-export async function getIdentities(): Promise<any> {
+export async function getContratAddress(contractAPI: string): Promise<any> {
   try {
-    const response = await firefly.getIdentities({
-    });
-    console.log("Identities:", response);
-    return response;
+    const response  = await firefly.getContractAPIs({networkname: contractAPI});
+    //const response = await firefly.getIdentities({ });
+    return response[0].location.address;
   } catch (e: any) {
-    console.error("Error getting identities:", e);
+    console.error(`Error getting contract ${contractAPI} :`, e);
+    return { error: e };
+  }
+}
+
+export async function getPoolID(tokenSymbol: string): Promise<any> {
+  try {
+    const response  = await firefly.getTokenPools({symbol: tokenSymbol});
+    return response[0].id;
+  } catch (e: any) {
+    console.error(`Error getting pool for ${tokenSymbol} :`, e);
     return { error: e };
   }
 }

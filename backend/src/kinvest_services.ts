@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import config from "../config.json";
 import { convertValue, convertValueToIntStr } from "./utils";
-import { getInterestRate, getTokenBalance, doStake, getStake, doUnstake } from "./connector";
+import { getInterestRate, getTokenBalance, doStake, getStake, doUnstake, getPoolID } from "./connector";
 import { ok } from "assert";
 
 // router for investment services
@@ -20,7 +20,9 @@ servicesInvest.post("/simulate", async (req: Request, res: Response) => {
 // Get the USDT token balance for the test customer
 servicesInvest.get("/balance", async (req: Request, res: Response) => {
 
-  const usdtbalance = await getTokenBalance(config.TOKEN_USDT_POOL_ID, config.customer[1]);
+  let TOKEN_USDT_POOL_ID = await getPoolID("USDT");
+
+  const usdtbalance = await getTokenBalance(TOKEN_USDT_POOL_ID, config.customer[1]);
   const usd = usdtbalance.length > 0 ? convertValue(usdtbalance[0].balance) : "0";
 
   return res.status(200).json({ usdtbalance: usd });

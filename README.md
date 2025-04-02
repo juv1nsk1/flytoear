@@ -3,12 +3,16 @@
 FlyToEarn is a rethinking of traditional airline miles through digital assets and decentralized finance (DeFi).
 
 This project implements a Web2 check-in process where travelers receive:
-	•	A FLYP NFT (Proof of Travel) minted on each trip, serving as verifiable proof of travel — which can be used to unlock exclusive offers on hotels, car rentals, and more.
-	•	A FLYM fungible token (digital miles) credited to the user’s FireFly custody wallet.
+
+   •	A FLYP NFT (Proof of Travel) minted on each trip, serving as verifiable proof of travel — which can be used to unlock exclusive offers on hotels, car rentals, and more.
+
+   •	A FLYM fungible token (digital miles) credited to the user’s FireFly custody wallet.
 
 FlyToEarn also integrates a complete DeFi layer:
-	•	Users can borrow USDT using their FLYM tokens as collateral via the kLender smart contract.
-	•	The borrowed USDT can be invested to earn yield through the KInvest smart contract, completing a full on-chain financial journey.
+
+   •	Users can borrow USDT using their FLYM tokens as collateral via the kLender smart contract.
+
+   •	The borrowed USDT can be invested to earn yield through the KInvest smart contract, completing a full on-chain financial journey.
 
 
 ## Setting up your FireFly on your machine
@@ -20,7 +24,7 @@ FlyToEarn also integrates a complete DeFi layer:
    ```
 3. Start the FireFly stack by running:
    ```bash
-   ff start dev
+   ff start devchallenge
    ```
 
 ## Deploy Solidity Contracts
@@ -56,8 +60,8 @@ ff accounts create devchallenge
 ```
 
 **Note:**
-Make sure to update all contract addresses in the backend/config.json file.
-The backend relies on these addresses to execute approveTransfer operations required by the Lend and Stake functions.
+~~Make sure to update all contract addresses in the backend/config.json file.~~ 
+The backend automatically fetches the contract address. Used for approveTransfer operations required by the Lend and Stake functions.
 
 ## Token Pools and Minting
 
