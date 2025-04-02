@@ -1,5 +1,6 @@
 import FireFly from "@hyperledger/firefly-sdk";
 import config from "../config.json";
+import flyconfig from "../flytoearn.json";
 
 // Initialize FireFly SDK with host and namespace from config
 const firefly = new FireFly({
@@ -43,7 +44,7 @@ export async function mintTokenByApi(apiName: string, to: string, uri: string): 
         idempotencyKey: uri + to,
         to: to,
         uri: uri,
-        amoutn: "1", // ⚠️ Typo: should be "amount"
+        amount: "1", 
       },
       key: config.SIGNING_KEY,
     });
@@ -61,7 +62,7 @@ export async function mintTokenByApi(apiName: string, to: string, uri: string): 
  */
 export async function simulateBorrow(amount: string): Promise<any> {
   try {
-    const response = await firefly.queryContractAPI(config.KLENDER_API, "simulateBorrowFromCollateral", {
+    const response = await firefly.queryContractAPI(flyconfig.KLENDER_API, "simulateBorrowFromCollateral", {
       input: {
         flymAmount: amount,
       },
@@ -84,7 +85,7 @@ export async function doBorrow(borrower: string, amount: string): Promise<boolea
   const response = await approveTransfer(config.TOKEN_FLYM_POOL_ID, borrower, config.KLENDER_ADDRESS);
   //console.log("approval:", response);
   try {
-    const response = await firefly.invokeContractAPI(config.KLENDER_API, "borrow", {
+    const response = await firefly.invokeContractAPI(flyconfig.KLENDER_API, "borrow", {
       input: {
         amount: amount,
       },
@@ -104,7 +105,7 @@ export async function doBorrow(borrower: string, amount: string): Promise<boolea
  */
 export async function getLoan(borrower: string): Promise<any> {
   try {
-    const response = await firefly.queryContractAPI(config.KLENDER_API, "getLoan", {
+    const response = await firefly.queryContractAPI(flyconfig.KLENDER_API, "getLoan", {
       input: {
         borrower: borrower,
       },
@@ -146,7 +147,7 @@ export async function approveTransfer(pool: string, from: string, to: string): P
 export async function doRepay(borrower: string): Promise<boolean> {
   await approveTransfer(config.TOKEN_USDT_POOL_ID, borrower, config.KLENDER_ADDRESS);
   try {
-    const response = await firefly.invokeContractAPI(config.KLENDER_API, "repay", {
+    const response = await firefly.invokeContractAPI(flyconfig.KLENDER_API, "repay", {
       input: {},
       key: borrower,
     });
@@ -201,7 +202,7 @@ export async function expireToken(pool: string, from: string, amount: number): P
  */
 export async function getInterestRate(): Promise<any> {
   try {
-    const response = await firefly.queryContractAPI(config.KINVEST_API, "monthlyInterestRate", {
+    const response = await firefly.queryContractAPI(flyconfig.KINVEST_API, "monthlyInterestRate", {
       input: {},
       key: config.SIGNING_KEY,
     });
@@ -222,7 +223,7 @@ export async function doStake(investor: string, amount: string): Promise<boolean
   const response = await approveTransfer(config.TOKEN_USDT_POOL_ID, investor, config.KINVEST_ADDRESS);
   //console.log("approval:", response);
   try {
-    const response = await firefly.invokeContractAPI(config.KINVEST_API, "stake", {
+    const response = await firefly.invokeContractAPI(flyconfig.KINVEST_API, "stake", {
       input: {
         amount: amount,
       },
@@ -242,7 +243,7 @@ export async function doStake(investor: string, amount: string): Promise<boolean
  */
 export async function getStake(investor: string): Promise<any> {
   try {
-    const response = await firefly.queryContractAPI(config.KINVEST_API, "getStake", {
+    const response = await firefly.queryContractAPI(flyconfig.KINVEST_API, "getStake", {
       input: {
         user: investor,
       },
@@ -263,7 +264,7 @@ export async function getStake(investor: string): Promise<any> {
 export async function doUnstake(investor: string): Promise<boolean> {
   await approveTransfer(config.TOKEN_USDT_POOL_ID, investor, config.KINVEST_ADDRESS);
   try {
-    const response = await firefly.invokeContractAPI(config.KINVEST_API, "unstake", {
+    const response = await firefly.invokeContractAPI(flyconfig.KINVEST_API, "unstake", {
       input: {},
       key: investor,
     });
@@ -271,5 +272,17 @@ export async function doUnstake(investor: string): Promise<boolean> {
   } catch (e: any) {
     console.error("Error unstaking:", e);
     return false;
+  }
+}
+
+export async function getIdentities(): Promise<any> {
+  try {
+    const response = await firefly.getIdentities({
+    });
+    console.log("Identities:", response);
+    return response;
+  } catch (e: any) {
+    console.error("Error getting identities:", e);
+    return { error: e };
   }
 }

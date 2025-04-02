@@ -36,7 +36,6 @@ servicesInvest.post("/stake", async (req: Request, res: Response) => {
 
   // Attempt staking operation for the test customer
   const response = await doStake(config.customer[1], convertValueToIntStr(amount));
-  console.log(response);
 
   // If staking fails already staked
   if (!response) {
@@ -51,7 +50,6 @@ servicesInvest.get("/position", async (req: Request, res: Response) => {
 
   // Retrieve staking data
   const response = await getStake(config.customer[1]);
-  console.log(response);
 
   // Extract staking details
   const accumulatedInterest = response.accumulatedInterest;
@@ -67,7 +65,6 @@ servicesInvest.get("/position", async (req: Request, res: Response) => {
 servicesInvest.post("/unstake", async (req: Request, res: Response) => {
   // Attempt unstaking operation
   const response = await doUnstake(config.customer[1]);
-  console.log(response);
 
   if (!response) {
     return res.status(500).json({ error: "Error to unstake. You don't have a position." });

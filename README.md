@@ -1,3 +1,14 @@
+# ✈️ FlyToEarn
+
+FlyToEarn is a rethinking of traditional airline miles through digital assets and decentralized finance (DeFi).
+
+This project implements a Web2 check-in process where travelers receive:
+	•	A FLYP NFT (Proof of Travel) minted on each trip, serving as verifiable proof of travel — which can be used to unlock exclusive offers on hotels, car rentals, and more.
+	•	A FLYM fungible token (digital miles) credited to the user’s FireFly custody wallet.
+
+FlyToEarn also integrates a complete DeFi layer:
+	•	Users can borrow USDT using their FLYM tokens as collateral via the kLender smart contract.
+	•	The borrowed USDT can be invested to earn yield through the KInvest smart contract, completing a full on-chain financial journey.
 
 
 ## Setting up your FireFly on your machine
@@ -5,92 +16,84 @@
 1. Install the [FireFly CLI here](https://github.com/hyperledger/firefly-cli?tab=readme-ov-file#install-the-cli)
 2. Create a FireFly stack by running:
    ```bash
-   ff init devChallenge --block-period 2 # Please set this. We expect you to use 2 second block period for this project (as real world blockchains are not instantaneous)
+   ff init devchallenge --block-period 2     # on MacOS --firefly-base-port  5001 
    ```
 3. Start the FireFly stack by running:
    ```bash
    ff start dev
    ```
 
-Web UI for member '0': http://127.0.0.1:5001/ui
-Swagger API UI for member '0': http://127.0.0.1:5001/api
-Sandbox UI for member '0': http://127.0.0.1:5109
+## Deploy Solidity Contracts
 
-Web UI for member '1': http://127.0.0.1:5002/ui
-Swagger API UI for member '1': http://127.0.0.1:5002/api
-Sandbox UI for member '1': http://127.0.0.1:5209
+1. FLYP Token - ERC721 - NFT
+```bash
+ff deploy ethereum devchallenge solidity/deploy_files/flyp/combined.json
+```
 
+2. FLYM Token - ERC720 - Miles
+```bash
+ff deploy ethereum devchallenge solidity/deploy_files/flym/combined.json
+```
 
-  "token address": "0x980372b718005b5f0a86cd0141402942175baba9"
+3. USDT Token - ERC721 - Stable coint
+```bash
+ff deploy ethereum devchallenge solidity/deploy_files/usdt/combined.json
+```
 
-  "simple_torage address": "0xeb4ffa9f8e86f7e4de1945ac170eee24d6575432"
+4. KLender - Lender smart contract 
+```bash
+ff deploy ethereum devchallenge solidity/deploy_files/klender/combined.json 
+```
 
-  token erc721uri 0x59667f7b12f7a71628fdf681dfc1b3ec87dbec0f
+5. KInvest - Stake smart contract
+```bash
+ff deploy ethereum devchallenge solidity/deploy_files/kinvest/combined.json 
+```
 
-ff init ethereum dev 2 --block-period 2 --firefly-base-port  5001 
- docker run -v ./contracts/:/sources ethereum/solc:stable  --combined-json abi,bin -o /sources/output /sources/simple_storage.sol
- /Users/juvinski/.firefly/stacks/test/docker-compose.yml
+## Create a customer wallet 
+```bash
+ff accounts create devchallenge 
+```
 
-docker run -v ./contracts/:/sources ethereum/solc:stable  --evm-version paris --combined-json abi,bin -o /sources/output/combined_token.json /sources/Token.sol
+**Note:**
+Make sure to update all contract addresses in the backend/config.json file.
+The backend relies on these addresses to execute approveTransfer operations required by the Lend and Stake functions.
 
+## Token Pools and Minting
 
- ff deploy ethereum dev contracts/output/combined.json 
+1. Create token pools for FLYM (miles) and USDC (stablecoin).
+2. Transfer 1000 USDC to the KInvest contract address — this balance will be used to pay out yield to users.
 
+##  Create Custom Contract Interfaces and APIs in Firefly Sandbox
 
-# Create FF 
-ff init ethereum devchallenge 3 --block-period 2 --firefly-base-port  5001 
-
-# Start
-
-ff start devchallenge
-
-# Compile token contracts
- docker run -v ./:/sources ethereum/solc:stable  --evm-version paris --combined-json abi,bin -o /sources/output/flyp /sources/erc721_flightpassport.sol
- docker run -v ./:/sources ethereum/solc:stable  --evm-version paris --combined-json abi,bin -o /sources/output/flym /sources/erc20_flightmiles.sol
- docker run -v ./:/sources ethereum/solc:stable  --evm-version paris --combined-json abi,bin -o /sources/output/usdt /sources/erc20_usdt.sol
-
-# Deploy contracts to firefly
-
-ff deploy ethereum devchallenge output/flyp/combined.json
-
-# sources/erc721_flightpassport.sol:FlightPassport
-# FLYP_ADDRESS = "0x532cb27bf52e305012006e858a1974a2afb2ef0e"
-
-ff deploy ethereum devchallenge output/flym/combined.json
-# sources/erc20_flightmiles.sol:FlightMiles
-# FLYM_ADDRESS = "0x9a844c1a7b973e8019c458a20ea1081f2c4a9935"
-
-ff deploy ethereum devchallenge output/usdt/combined.json
-# sources/erc20_usdt.sol:USDT
-# USDT_ADDRESS = "0xb1ac73cab414a4ee2cc2e4988438897fffdcc66a"
+Use the ABI files located in solidity/abis/*.json to create contract interfaces:
 
 
-# ABIs
+| ABI File               | FireFly API Name |
+|------------------------|------------------|
+| flyp_erc721uri_abi     | FlypAPI           |
+| klender_abi.json       | KLenderAPI        |
+| kinvest_abi.json       | KInvestAPI        |
+
+ If you change any of the API names, make sure to update them in the file backend/flytoearn.json accordingly.
 
 
-# compile KLender
-docker run -v ./:/sources ethereum/solc:stable  --evm-version paris --combined-json abi,bin --include-path /sources/node_modules/  --base-path /sources -o /sources/output/klender /sources/contracts/KLender/KLender.sol 
+# Backlog and Limitations
+- **Customer Identity Management** 
+
+   The project assumes that customer registration, KYC, key generation, and authentication are handled externally before reaching this frontend. These components are not included in the current implementation.
 
 
-# deploy "ff deploy ...json usdt_address flym_address
-ff deploy ethereum devchallenge output/klender/combined.json  "0xb1ac73cab414a4ee2cc2e4988438897fffdcc66a"  "0x9a844c1a7b973e8019c458a20ea1081f2c4a9935" 
+- **Miles Expiration** 
 
-# Klender address
-0xa0981988976ac4b8e285ba717bab0f234d2154dd
+   A manual interface is provided to simulate miles expiration. In a production environment, this should be managed by a backend service and triggered via scheduled jobs or external integrations.
 
 
-# compile KInvest
-docker run -v ./:/sources ethereum/solc:stable  --evm-version paris --combined-json abi,bin --include-path /sources/node_modules/  --base-path /sources -o /sources/output/kinvest /sources/contracts/KInvest/KInvest.sol 
+- **Lend & Stake Smart Contracts**
 
-# deploy "ff deploy ...json usdt_address 
-ff deploy ethereum devchallenge output/kinvest/combined.json  "0xb1ac73cab414a4ee2cc2e4988438897fffdcc66a"  
+   While the smart contracts implement basic security measures (e.g., Ownable, nonReentrant), they are prototypes. Improvements are needed to support multiple loans, fetch real-time mile prices from an oracle, and enhance collateral management logic.
 
 
-# KInvest address 
-0x7ae3fe156a2e51fb20eda85cd97664a5973596d4
+- **NFT Metadata (URI)**
 
-
-# klender address should have usdt balance
-
-
-# nginx hosts session
+   The current implementation uses a simulated static JSON URI for NFT metadata. In a production setting, metadata should be stored on IPFS or served from a reliable CDN to ensure permanence and verifiability.

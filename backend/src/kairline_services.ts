@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import config from "../config.json";
+import flyconfig from "../flytoearn.json";
 import { convertDate, getTravelData, convertValue } from "./utils";
 import { TravelRequestBody } from "./types";
 import { getTokenBalance, mintToken, mintTokenByApi, expireToken } from "./connector";
@@ -18,7 +19,7 @@ servicesAirline.post("/checkin", async (req: Request, res: Response) => {
     }
 
     // Mint the boarding pass NFT via contract API
-    const statusPass = await mintTokenByApi(config.TOKEN_FLYP_API, customer, uri);
+    const statusPass = await mintTokenByApi(flyconfig.TOKEN_FLYP_API, customer, uri);
 
     // Mint loyalty miles (FLYM tokens)
     const statusMiles = await mintToken("FLYM", customer, "10000000000000000000000");
@@ -53,7 +54,6 @@ servicesAirline.get("/balance", async (req: Request, res: Response) => {
 // Get all FLYM token balances across all users
 servicesAirline.get("/balances", async (req: Request, res: Response) => {
   const balancelist = await getTokenBalance(config.TOKEN_FLYM_POOL_ID, "all");
-  console.log(balancelist);
   return res.status(200).json({ balancelist: balancelist });
 });
 
@@ -64,7 +64,7 @@ servicesAirline.get("/nft", async (req: Request, res: Response) => {
   res.send({
     name: `Flight to ${destination}`,
     description: `Check-in on ${date} for your flight to ${destination}.`,
-    image: image || `${config.NFT_IMAGE_URL}${(destination as string).toLowerCase()}.png`,
+    image: image || `${flyconfig.NFT_IMAGE_URL}${(destination as string).toLowerCase()}.png`,
     attributes: [
       { trait_type: "Date", value: date },
       { trait_type: "Destination", value: destination },

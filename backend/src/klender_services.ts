@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import config from "../config.json";
 import { convertValue, convertValueToIntStr } from "./utils";
-import { simulateBorrow, getTokenBalance, doBorrow, doRepay, getLoan, mintToken } from "./connector";
+import { simulateBorrow, getTokenBalance, doBorrow, doRepay, getLoan } from "./connector";
 
 // router for services
 const servicesLender = Router();
