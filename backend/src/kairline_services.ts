@@ -37,13 +37,13 @@ export const createServiceAirline = (config:any) => {
   servicesAirline.post("/prooftravel", async (req: Request, res: Response) => {
 
 
-    const result = await getTokenBalance(config.TOKEN_FLYP_POOL_ID, config.customer[1]);
+    const result = await getTokenBalance(config.TOKEN_FLYP_POOL_ID, config.CUSTOMER);
     return res.status(200).json({ nfts: result });
   });
 
   // Get FLYM balance and last update timestamp for the test customer
   servicesAirline.get("/balance", async (req: Request, res: Response) => {
-    const balancelist = await getTokenBalance(config.TOKEN_FLYM_POOL_ID, config.customer[1]);
+    const balancelist = await getTokenBalance(config.TOKEN_FLYM_POOL_ID, config.CUSTOMER);
 
     const formattedDate = convertDate(balancelist[0].updated);
     return res.status(200).json({

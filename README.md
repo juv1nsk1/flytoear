@@ -82,6 +82,62 @@ Use the ABI files located in solidity/abis/*.json to create contract interfaces:
 
  If you change any of the API names, make sure to update them in the file backend/config.json accordingly.
 
+## Start the Backend
+
+```bash
+cd backend
+npm install
+npm start
+```
+ > This will install all backend dependencies and start the Express server on http://localhost:4000. 
+
+
+### Start the frontend
+```bash 
+cd frontend
+npm install
+npm start
+```
+   > This will launch the React-based UI on http://localhost:3000.
+
+
+## Ready to Play?
+
+Follow the steps below to experience the full FlyToEarn journey:
+
+1. **Start the App**  
+   Open [http://localhost:4000](http://localhost:4000) in your browser.  
+   > The system assumes you’ve already purchased a ticket, completed KYC, and your wallet key is registered on FireFly.
+
+2. **Simulate a Flight**  
+   Navigate to `KAirline / Check-in` and submit your travel details.  
+   > The backend will mint a **FLYP NFT (Proof of Travel)** and **FLYM miles tokens**, transferring both to your FireFly custody wallet.
+
+3. **View Your Travel NFTs**  
+   Go to `KAirline / Proof of Travel` to see a visual gallery of all your FLYP NFTs.  
+   > Metadata is fetched from the NFT URI and rendered as cards.
+
+4. **Check Miles Balance**  
+   Visit `KAirline / Miles Balance` to see your FLYM balance and the last updated timestamp.
+
+5. **Borrow USDT Using Your Miles**  
+   Head to `KBank / Lend` to borrow **USDT** using your FLYM as collateral.  
+   > Loans are 100% collateralized and accrue **5% interest/year**.
+
+6. **Stake Your USDT for Yield**  
+   With USDT in hand, go to `KBank / Invest` to stake and earn **7% interest/year**.
+
+7. **Withdraw Investment**  
+   After staking, return to `KBank / Invest` to **unstake** and withdraw your principal + accumulated interest.
+
+8. **Repay Your Loan**  
+   Use the recovered USDT to go back to `KBank / Lend` and **repay** your loan, reclaiming your FLYM collateral.
+
+---
+
+**Note:**  
+If you encounter balance-related errors, make sure you’ve completed the steps in the **[Token Pools and Minting](#-token-pools-and-minting)** section to initialize the system properly.
+
 
 # Backlog and Limitations
 - **Customer Identity Management** 
@@ -102,3 +158,32 @@ Use the ABI files located in solidity/abis/*.json to create contract interfaces:
 - **NFT Metadata (URI) & Images**
 
    The current implementation uses a simulated static JSON URI for NFT metadata. In a production setting, metadata should be stored on IPFS or served from a reliable CDN to ensure permanence and verifiability.
+
+
+## Optional Setup for Networking Tests
+
+1. Create a DNS entry or local alias
+   `10.0.0.3 flytoearn.dev`
+
+2.	Configure Nginx for the custom domain
+Create a /etc/nginx/sites-available/flytoearn.dev file and link it on sites-enabled
+
+```bash
+server {
+        server_name fly_to_earn.dev;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+        # React Frontend
+        location / {         
+                proxy_pass http://127.0.0.1:4000;
+        }
+        # Next backend
+        location /api {
+                proxy_pass http://127.0.0.1:3000;
+        }
+
+}
+```
+   > Adjust `frontend/vite.config.ts` and `backend/config.ts`
+   
+   > After setting this up, restart Nginx: `sudo systemctl restart nginx`

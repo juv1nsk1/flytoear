@@ -32,8 +32,8 @@ export const createServiceKLender = (config:any) => {
     let TOKEN_USDT_POOL_ID = await getPoolID("USDT");
 
     // Fetch token balances using the second customer in config
-    const flymbalance = await getTokenBalance(TOKEN_FLYM_POOL_ID, config.CUSTOMER_LIST[1]);
-    const usdtbalance = await getTokenBalance(TOKEN_USDT_POOL_ID, config.CUSTOMER_LIST[1]);
+    const flymbalance = await getTokenBalance(TOKEN_FLYM_POOL_ID, config.CUSTOMER);
+    const usdtbalance = await getTokenBalance(TOKEN_USDT_POOL_ID, config.CUSTOMER);
 
     // Extract and convert balances 
     const usd = usdtbalance.length > 0 ? convertValue(usdtbalance[0].balance) : "0";
@@ -51,7 +51,7 @@ export const createServiceKLender = (config:any) => {
     }
 
     // Attempt to perform the borrow operation
-    const response = await doBorrow(config.CUSTOMER_LIST[1], convertValueToIntStr(amount));
+    const response = await doBorrow(config.CUSTOMER, convertValueToIntStr(amount));
 
     // If borrow fails (user already has a loan)
     if (!response) {
@@ -63,7 +63,7 @@ export const createServiceKLender = (config:any) => {
 
   // Get current loan details for the configured customer
   servicesLender.get("/loan", async (req: Request, res: Response) => {
-    const response = await getLoan(config.CUSTOMER_LIST[1]);
+    const response = await getLoan(config.CUSTOMER);
     const { output } = response;
 
     // Convert and extract loan details
@@ -80,7 +80,7 @@ export const createServiceKLender = (config:any) => {
   // Repay an active loan
   servicesLender.post("/repay", async (req: Request, res: Response) => {
     // Attempt to repay loan for configured customer
-    const response = await doRepay(config.CUSTOMER_LIST[1]);
+    const response = await doRepay(config.CUSTOMER);
 
     if (!response) {
       return res.status(500).json({ error: "Error to repay. Check your USDT balance." });

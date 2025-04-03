@@ -23,7 +23,7 @@ export const createServiceKInvest = (config:any) => {
 
     let TOKEN_USDT_POOL_ID = await getPoolID("USDT");
 
-    const usdtbalance = await getTokenBalance(TOKEN_USDT_POOL_ID, config.customer[1]);
+    const usdtbalance = await getTokenBalance(TOKEN_USDT_POOL_ID, config.CUSTOMER);
     const usd = usdtbalance.length > 0 ? convertValue(usdtbalance[0].balance) : "0";
 
     return res.status(200).json({ usdtbalance: usd });
@@ -38,7 +38,7 @@ export const createServiceKInvest = (config:any) => {
     }
 
     // Attempt staking operation for the test customer
-    const response = await doStake(config.customer[1], convertValueToIntStr(amount));
+    const response = await doStake(config.CUSTOMER, convertValueToIntStr(amount));
 
     // If staking fails already staked
     if (!response) {
@@ -52,7 +52,8 @@ export const createServiceKInvest = (config:any) => {
   servicesInvest.get("/position", async (req: Request, res: Response) => {
 
     // Retrieve staking data
-    const response = await getStake(config.customer[1]);
+    console.log("customer", config.CUSTOMER);
+    const response = await getStake(config.CUSTOMER);
 
     // Extract staking details
     const accumulatedInterest = response.accumulatedInterest;
@@ -67,7 +68,7 @@ export const createServiceKInvest = (config:any) => {
   // Withdraw staked tokens
   servicesInvest.post("/unstake", async (req: Request, res: Response) => {
     // Attempt unstaking operation
-    const response = await doUnstake(config.customer[1]);
+    const response = await doUnstake(config.CUSTOMER);
 
     if (!response) {
       return res.status(500).json({ error: "Error to unstake. You don't have a position." });

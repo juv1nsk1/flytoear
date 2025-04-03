@@ -13,7 +13,7 @@ import { ChevronDownIcon } from '@heroicons/react/16/solid';
 export function Checkin() {
   // State hooks to store form data and UI feedback
   const [date, setDate] = useState("03/28/2025");
-  const [destination, setDestination] = useState("Paris");
+  const [destination, setDestination] = useState("New York");
   const [confirmationCode, setConfirmationCode] = useState("ABC123");
   const [loading, setLoading] = useState(false);
   const [systemMsg, setSystemMsg] = useState("");

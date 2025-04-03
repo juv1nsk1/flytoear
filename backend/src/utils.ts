@@ -45,7 +45,7 @@ export function getTravelData(req: TravelRequestBody): TravelDataResponse {
   // Return result with resolved URI and mapped customer wallet address
   return {
     uri: uri,
-    customer: config.CUSTOMER_LIST[filtered[0].customer],
+    customer: config.CUSTOMER,
     error: null,
   };
 }

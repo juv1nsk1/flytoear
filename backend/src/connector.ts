@@ -442,7 +442,7 @@ export async function createConfig(): Promise<any> {
     HOST: config.HOST,
     NAMESPACE: config.NAMESPACE,
     SIGNING_KEY: config.SIGNING_KEY,
-    CUSTOMER_LISt: config.CUSTOMER_LIST,
+    CUSTOMER: config.CUSTOMER,
     PORT: config.PORT,
   };
 }
