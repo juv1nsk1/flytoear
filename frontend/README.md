@@ -1,6 +1,7 @@
-# Frontend: Kaleido Developer Challenge
+## Configuration
 
-This is a basic React UI that allows you to set/get a value and mint a token using the [solidty smart contracts](../solidity/contracts/)
+Update `vite.config.ts` to set the correct backend API base URL for frontend requests.
+
 
 ## Run
 
