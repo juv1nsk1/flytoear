@@ -45,9 +45,9 @@ export const createServiceAirline = (config:any) => {
   servicesAirline.get("/balance", async (req: Request, res: Response) => {
     const balancelist = await getTokenBalance(config.TOKEN_FLYM_POOL_ID, config.CUSTOMER);
 
-    const formattedDate = convertDate(balancelist[0].updated);
+    const formattedDate = convertDate(balancelist[0]?.updated);
     return res.status(200).json({
-      balance: convertValue(balancelist[0].balance),
+      balance: convertValue(balancelist[0]?.balance),
       updated: formattedDate,
     });
   });
