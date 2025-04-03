@@ -68,6 +68,7 @@ The backend automatically fetches the contract address. Used for approveTransfer
 1. Create fungible token pools for FLYM (FlightMiles) and USDT (stablecoin).
 2. Transfer 1000 USDT to the KLender contract address.
 3. Transfer 1000 USDT to the KInvest contract address — this balance will be used to pay out yield to users.
+4. Create a nonfungible token pool for FLYP
 
 ##  Create Custom Contract Interfaces and APIs in Firefly Sandbox
 
