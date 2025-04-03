@@ -65,9 +65,9 @@ The backend automatically fetches the contract address. Used for approveTransfer
 
 ## Token Pools and Minting
 
-1. Create token pools for FLYM (miles) and USDC (stablecoin).
-2. Transfer 1000 USDC to the KLender contract address.
-3. Transfer 1000 USDC to the KInvest contract address — this balance will be used to pay out yield to users.
+1. Create fungible token pools for FLYM (FlightMiles) and USDT (stablecoin).
+2. Transfer 1000 USDT to the KLender contract address.
+3. Transfer 1000 USDT to the KInvest contract address — this balance will be used to pay out yield to users.
 
 ##  Create Custom Contract Interfaces and APIs in Firefly Sandbox
 
@@ -185,5 +185,5 @@ server {
 }
 ```
    > Adjust `frontend/vite.config.ts` and `backend/config.ts`
-   
+
    > After setting this up, restart Nginx: `sudo systemctl restart nginx`
