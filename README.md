@@ -106,7 +106,7 @@ cd backend
 npm install
 npm start
 ```
- > This will install all backend dependencies and start the Express server on http://localhost:4000. 
+ > This will install all backend dependencies and start the Express server on http://localhost:3000. 
 
 
 ### Start the frontend
@@ -115,7 +115,7 @@ cd frontend
 npm install
 npm start
 ```
-   > This will launch the React-based UI on http://localhost:3000.
+   > This will launch the React-based UI on http://localhost:4000.
 
 
 ## Ready to Play?
