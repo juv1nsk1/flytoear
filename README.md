@@ -34,12 +34,12 @@ FlyToEarn also integrates a complete DeFi layer:
 ff deploy ethereum devchallenge solidity/deploy_files/flyp/combined.json
 ```
 
-2. FLYM Token - ERC720 - Miles - Copy this address!
+2. FLYM Token - ERC20 - Miles - Copy this address!
 ```bash
 ff deploy ethereum devchallenge solidity/deploy_files/flym/combined.json
 ```
 
-3. USDT Token - ERC721 - Stable coint - Copy this address!
+3. USDT Token - ERC20 - Stable coint - Copy this address!
 ```bash
 ff deploy ethereum devchallenge solidity/deploy_files/usdt/combined.json
 ```
@@ -81,6 +81,22 @@ Use the ABI files located in solidity/abis/*.json to create contract interfaces:
 | kinvest_abi.json       | KInvestAPI        |
 
  If you change any of the API names, make sure to update them in the file backend/config.json accordingly.
+
+## Update the Backend/config.json 
+
+1.	Customer Wallet Addresse
+Replace the CUSTOMER field with the public key generated when creating your FireFly account:
+
+      `"CUSTOMER": "0x.",`
+
+2.	Signing Key
+Set the SIGNING_KEY to your FireFly node’s Ethereum address.
+You can find it in the FireFly UI under:
+Network → Organization → Your Org → Ethereum Address (at the bottom of the page)
+
+      `"SIGNING_KEY": "0x...", `
+
+
 
 ## Start the Backend
 
