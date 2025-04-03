@@ -1,7 +1,7 @@
 import { TravelRequestBody, TravelDataResponse } from "./types";
 import { travel, image, special } from "../database.json";
 import config from "../config.json";
-import flyconfig from "../flytoearn.json";
+
 
 /**
  * Generates NFT metadata URI and identifies the customer based on travel information.
@@ -35,7 +35,7 @@ export function getTravelData(req: TravelRequestBody): TravelDataResponse {
 
   // Construct NFT metadata URI with encoded query params
   const uri =
-    `${flyconfig.NFT_BASE_URI}?destination=` +
+    `${config.NFT_BASE_URI}?destination=` +
     req.destination.replace(/ /g, "%20") +
     "&date=" +
     req.date.replace(/\//g, "-") +
@@ -45,7 +45,7 @@ export function getTravelData(req: TravelRequestBody): TravelDataResponse {
   // Return result with resolved URI and mapped customer wallet address
   return {
     uri: uri,
-    customer: config.customer[filtered[0].customer],
+    customer: config.CUSTOMER_LIST[filtered[0].customer],
     error: null,
   };
 }

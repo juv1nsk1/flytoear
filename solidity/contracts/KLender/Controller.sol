@@ -12,13 +12,16 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
  */
 contract LenderController is Ownable(), ReentrancyGuard {
 
-    IERC20 internal _stableToken;       // Token used for borrowing (e.g., USDT)
-    IERC20 internal _collateralToken;   // Token used as collateral (e.g., FLYM)
+    IERC20 internal _stableToken;       // Token used for borrowing (USDT)
+    IERC20 internal _collateralToken;   // Token used as collateral (FLYM)
+
+    // Controller address - Flym Org 
+    address internal _controller;
 
     // Protocol parameters
-    uint256 public collateralRatio = 50;               // e.g., 50% collateral requirement
-    uint256 public interestRate = 15;                  // e.g., 15% interest rate
-    uint256 public liquidationThreshold = 110;         // e.g., liquidate if collateral < 110% of debt
+    uint256 public collateralRatio = 150;               // 150% collateral requirement
+    uint256 public interestRate = 5;                    // 5% interest rate
+    uint256 public liquidationThreshold = 110;         // liquidate if collateral < 110% of debt
     uint256 public gracePeriod = 90 days;              // Loan must be repaid within 90 days
 
     // Used to manage delayed collateral changes
@@ -34,6 +37,7 @@ contract LenderController is Ownable(), ReentrancyGuard {
         uint256 interestAmount;
         uint256 collateralAmount;
         uint256 startTimestamp;
+        bool isApproved;
     }
 
     mapping(address => Loan) public loans;
@@ -49,7 +53,7 @@ contract LenderController is Ownable(), ReentrancyGuard {
     }
 
     /**
-     * @notice Updates the required collateral ratio (e.g., 50 = 50%)
+     * @notice Updates the required collateral ratio 
      * @param ratio The new collateral ratio.
      */
     function setCollateralRatio(uint256 ratio) external onlyOwner {
@@ -58,7 +62,7 @@ contract LenderController is Ownable(), ReentrancyGuard {
     }
 
     /**
-     * @notice Updates the loan interest rate (e.g., 15 = 15%)
+     * @notice Updates the loan interest rate (5 = 5%)
      * @param rate The new interest rate.
      */
     function setInterestRate(uint256 rate) external onlyOwner {
@@ -73,6 +77,15 @@ contract LenderController is Ownable(), ReentrancyGuard {
     function setLiquidationThreshold(uint256 threshold) external onlyOwner {
         require(threshold > 0, "Invalid liquidation threshold");
         liquidationThreshold = threshold;
+    }
+
+    /**
+     * @notice Sets the controller address.
+     * @param controller The new controller address.
+     */
+    function setController(address controller) external onlyOwner {
+        require(controller != address(0), "Invalid controller address");
+        _controller = controller;
     }
 
     /**
@@ -118,7 +131,7 @@ contract LenderController is Ownable(), ReentrancyGuard {
 
     /**
      * @notice Sets the price of 1 unit of collateral in USDT (scaled to 18 decimals).
-     * @param newPrice The new price (e.g., 1e18 = 1 USDT per collateral unit)
+     * @param newPrice The new price (1e18 = 1 USDT per collateral unit)
      */
     function setFlymPriceInUSDT(uint256 newPrice) external onlyOwner {
         flymPriceInUSDT = newPrice;

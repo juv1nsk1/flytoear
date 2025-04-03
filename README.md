@@ -34,24 +34,24 @@ FlyToEarn also integrates a complete DeFi layer:
 ff deploy ethereum devchallenge solidity/deploy_files/flyp/combined.json
 ```
 
-2. FLYM Token - ERC720 - Miles
+2. FLYM Token - ERC720 - Miles - Copy this address!
 ```bash
 ff deploy ethereum devchallenge solidity/deploy_files/flym/combined.json
 ```
 
-3. USDT Token - ERC721 - Stable coint
+3. USDT Token - ERC721 - Stable coint - Copy this address!
 ```bash
 ff deploy ethereum devchallenge solidity/deploy_files/usdt/combined.json
 ```
 
 4. KLender - Lender smart contract 
 ```bash
-ff deploy ethereum devchallenge solidity/deploy_files/klender/combined.json 
+ff deploy ethereum devchallenge solidity/deploy_files/klender/combined.json  "USDT_TOKEN_ADDRESS" "FLYM_TOTAL_ADDRESS" "SIGNING_KEY"
 ```
 
 5. KInvest - Stake smart contract
 ```bash
-ff deploy ethereum devchallenge solidity/deploy_files/kinvest/combined.json 
+ff deploy ethereum devchallenge solidity/deploy_files/kinvest/combined.json  "USDT_TOKEN_ADDRESS"
 ```
 
 ## Create a customer wallet 
@@ -66,7 +66,8 @@ The backend automatically fetches the contract address. Used for approveTransfer
 ## Token Pools and Minting
 
 1. Create token pools for FLYM (miles) and USDC (stablecoin).
-2. Transfer 1000 USDC to the KInvest contract address — this balance will be used to pay out yield to users.
+2. Transfer 1000 USDC to the KLender contract address.
+3. Transfer 1000 USDC to the KInvest contract address — this balance will be used to pay out yield to users.
 
 ##  Create Custom Contract Interfaces and APIs in Firefly Sandbox
 
@@ -79,7 +80,7 @@ Use the ABI files located in solidity/abis/*.json to create contract interfaces:
 | klender_abi.json       | KLenderAPI        |
 | kinvest_abi.json       | KInvestAPI        |
 
- If you change any of the API names, make sure to update them in the file backend/flytoearn.json accordingly.
+ If you change any of the API names, make sure to update them in the file backend/config.json accordingly.
 
 
 # Backlog and Limitations
@@ -98,6 +99,6 @@ Use the ABI files located in solidity/abis/*.json to create contract interfaces:
    While the smart contracts implement basic security measures (e.g., Ownable, nonReentrant), they are prototypes. Improvements are needed to support multiple loans, fetch real-time mile prices from an oracle, and enhance collateral management logic.
 
 
-- **NFT Metadata (URI)**
+- **NFT Metadata (URI) & Images**
 
    The current implementation uses a simulated static JSON URI for NFT metadata. In a production setting, metadata should be stored on IPFS or served from a reliable CDN to ensure permanence and verifiability.

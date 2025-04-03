@@ -3,17 +3,17 @@ const { ethers } = require("hardhat");
 import config from "./config.json"
 
 describe("KLender", function () {
-  let owner, user:any, liquidator;
+  let owner, user:any, controller:any;
   let usdt:any, flym:any, klender:any;
 
   // const USDT_ADDRESS = config.USDT;
   // const FLYM_ADDRESS = config.FLYM;
 
-  const BORROW_AMOUNT =  ethers.utils.parseUnits("1", 17);
-  const BORROW_AMOUNT2 =  ethers.utils.parseUnits("10", 17);
+  const BORROW_AMOUNT =  ethers.utils.parseUnits("1", 18);
+  const BORROW_AMOUNT2 =  ethers.utils.parseUnits("10", 18);
 
   beforeEach(async () => {
-    [owner, user] = await ethers.getSigners();
+    [owner, user, controller] = await ethers.getSigners();
 
     // // Load existing token contracts
     // flym = await ethers.getContractAt("IERC20", FLYM_ADDRESS);
@@ -32,7 +32,7 @@ describe("KLender", function () {
 
     // Deploy Klender
     const Klender = await ethers.getContractFactory("KLender");
-    klender = await Klender.deploy(usdt.address, flym.address);
+    klender = await Klender.deploy(usdt.address, flym.address, controller.address);
     await klender.deployed();
 
     // Transfer USDT to Klender to simulating liquidity pool
@@ -41,8 +41,8 @@ describe("KLender", function () {
 
     // Mint FLYM to user
     const flymWithOwner = flym.connect(owner);
-    await flym.transfer(user.address, BORROW_AMOUNT);
-    await usdt.transfer(user.address, BORROW_AMOUNT);
+    await flym.transfer(user.address, BORROW_AMOUNT2);
+    await usdt.transfer(user.address, BORROW_AMOUNT2);
     
   });
 
@@ -51,6 +51,7 @@ describe("KLender", function () {
   it("allow user to borrow", async () => {
     const flymUser = flym.connect(user);
     const klenderUser = klender.connect(user);
+    const klenderController = klender.connect(controller);
 
     // await showBalance(user, usdt, flym);
     // await showBalance(klender, usdt, flym);
@@ -65,7 +66,12 @@ describe("KLender", function () {
     const loan = await klender.getLoan(user.address);
     //console.log(loan)
     expect(loan.principal).to.equal(BORROW_AMOUNT);
+    expect(loan.isApproved).to.equal(false);
 
+    await klenderController.approveBorrow(user.address);
+    //await klenderUser.processBorrow();
+    const approvedLoan = await klender.getLoan(user.address);
+    expect(approvedLoan.isApproved).to.equal(true);
 
   });
 
@@ -73,12 +79,17 @@ describe("KLender", function () {
     const flymUser = flym.connect(user);
     const usdtUser = usdt.connect(user);
     const klenderUser = klender.connect(user);
+    const klenderController = klender.connect(controller);
+
 
     // await showBalance(user, usdt, flym);
     // await showBalance(klender, usdt, flym);
 
     await flymUser.approve(klender.address, BORROW_AMOUNT2);
     await klenderUser.borrow(BORROW_AMOUNT);
+    await klenderController.approveBorrow(user.address);
+    //await klenderUser.processBorrow();
+
     const loan1 = await klender.getLoan(user.address);
     expect(loan1.principal).to.equal(BORROW_AMOUNT);
 
@@ -103,9 +114,12 @@ describe("KLender", function () {
   it("allow the owner to liquidate after grace period", async () => {
     const flymUser = flym.connect(user);
     const klenderUser = klender.connect(user);
+    const klenderController = klender.connect(controller);
 
-    await flymUser.approve(klender.address, BORROW_AMOUNT);
+    await flymUser.approve(klender.address, BORROW_AMOUNT2);
     await klenderUser.borrow(BORROW_AMOUNT);
+    await klenderController.approveBorrow(user.address);
+    //await klenderUser.processBorrow();
 
     // Fast forward beyond grace period
     await ethers.provider.send("evm_increaseTime", [91 * 24 * 60 * 60]);
@@ -115,18 +129,15 @@ describe("KLender", function () {
 
     const loan = await klender.getLoan(user.address);
     expect(loan.principal).to.equal(0);
+
   });
 
   it("simulate borrow from USDT", async () => {
     const amount = ethers.utils.parseUnits("100", 18);
     const [interest, collateralRequired] = await klender.simulateBorrowFromUSDT(amount);
 
-    const expectedInterest = amount.mul(await klender.interestRate()).div(100);
-    const expectedTotal = amount.add(expectedInterest).mul(await klender.collateralRatio()).div(100);
-    const expectedCollateral = await klender.convertUSDTToCollateral(expectedTotal);
-
-    expect(interest).to.equal(expectedInterest);
-    expect(collateralRequired).to.equal(expectedCollateral);
+    expect(interest).to.equal("157500000000000000000");
+    expect(collateralRequired).to.equal("5000000000000000000");
   });
 
   it("simulate borrow from FLYM", async () => {

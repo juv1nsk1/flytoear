@@ -2,10 +2,15 @@
   "HOST": "http://127.0.0.1:5001",
   "NAMESPACE": "default",
   "PORT": 3000,
-
   "SIGNING_KEY": "0x2909b583a4c11d2237784a1649bc715cfbd192ca",
-  
-  "customer": [ "","0xb1b86b775bc749c10667c549e3f3d40141527414"]
+
+  "CUSTOMER_LIST": [ "","0xb1b86b775bc749c10667c549e3f3d40141527414"],
+
+  "TOKEN_FLYP_API":"FlypAPI",
+  "KLENDER_API": "KlenderAPI10",
+  "KINVEST_API": "KInvestAPI",
+  "NFT_BASE_URI": "http://127.0.0.1:4000/api/airline/nft",
+  "NFT_IMAGE_URL": "http://127.0.0.1:4000/static/"
 
 }
 

@@ -9,20 +9,6 @@ import "./Controller.sol";
  * Inherits from StakeController which handles the logic for interest calculation and storage.
  */
 contract KInvest is StakeController {
-    /// @notice Emitted when a user stakes tokens
-    event Staked(address indexed user, uint256 amount);
-
-    /// @notice Emitted when a user unstakes and receives tokens + interest
-    event Unstaked(address indexed user, uint256 amount, uint256 interest);
-
-    /**
-     * @notice Constructor sets the stable token (e.g. USDT) used for staking.
-     * @param stableTokenAddress The address of the ERC20 stable token.
-     */
-    constructor(address stableTokenAddress) {
-        setStableToken(stableTokenAddress);
-    }
-
     /**
      * @notice Allows a user to stake a specific amount of stable tokens.
      * @param amount The amount of tokens to stake.
@@ -85,5 +71,19 @@ contract KInvest is StakeController {
         amount = stakeData.amount;
         startTimestamp = stakeData.startTimestamp;
         accumulatedInterest = calculateAccumulatedInterest(user);
+    }
+
+    /// @notice Emitted when a user stakes tokens
+    event Staked(address indexed user, uint256 amount);
+
+    /// @notice Emitted when a user unstakes and receives tokens + interest
+    event Unstaked(address indexed user, uint256 amount, uint256 interest);
+
+    /**
+     * @notice Constructor sets the stable token (e.g. USDT) used for staking.
+     * @param stableTokenAddress The address of the ERC20 stable token.
+     */
+    constructor(address stableTokenAddress) {
+        setStableToken(stableTokenAddress);
     }
 }

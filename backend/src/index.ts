@@ -1,28 +1,39 @@
 import express from "express";
 import bodyparser from "body-parser";
-import config from "../config.json";
-
+import { startListener, createConfig} from "./connector";
 
 // Import service routers
-import servicesAirline from "./kairline_services";
-import servicesLender from "./klender_services";
-import servicesInvest from "./kinvest_services";
+import { createServiceAirline } from "./kairline_services";
+import {createServiceKLender } from "./klender_services";
+import { createServiceKInvest }  from "./kinvest_services";
+import { start } from "repl";
 
 const app = express();
 
 app.use(bodyparser.json());
 
 
-// Mount routes 
-app.use('/api/airline', servicesAirline);
-app.use('/api/lender', servicesLender);
-app.use('/api/invest', servicesInvest);
+
 
 // Initialize 
 async function init() {
+  console.log("Creating config...");
+  const config = await createConfig();
+
+  console.log("Adding routes...");
+
+  // Mount routes 
+  app.use('/api/airline', createServiceAirline(config));
+  app.use('/api/lender', createServiceKLender(config));
+  app.use('/api/invest', createServiceKInvest(config));
+
+  console.log("Starting listener...");
+  startListener();
+
   app.listen(config.PORT, () =>
     console.log(`Kaleido DApp backend listening on port ${config.PORT}!`)
-  );
+);
+  
 }
 
 init().catch((err) => {

@@ -16,6 +16,7 @@ export function Repay() {
 
   // Loan data
   const [principal, setPrincipal] = useState("0");
+  const [isapproved, setApproved] = useState(false);
   const [collateral, setCollateral] = useState("0");
   const [startdate, setStartDate] = useState("");
   const [interest, setInterest] = useState("0");
@@ -30,7 +31,7 @@ export function Repay() {
       return;
     }
 
-    const { collateralAmount, interestAmount, principal, startTimestamp } = await res.json();
+    const { collateralAmount, interestAmount, principal, startTimestamp, isApproved } = await res.json();
 
     // If there's no active loan, redirect to borrow screen
     if (principal === "0.00") {
@@ -41,6 +42,7 @@ export function Repay() {
     setCollateral(collateralAmount);
     setInterest(interestAmount);
     setStartDate(startTimestamp);
+    setApproved(isApproved);
   };
 
   useEffect(() => {
@@ -81,10 +83,11 @@ export function Repay() {
 
       {/* Repay action */}
       <button
+        disabled={!isapproved}
         onClick={handleRepay}
         className="w-full bg-sky-900 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
       >
-        Confirm Repayment
+        { isapproved ? "Confirm Repayment": "Loan pending approval" }
       </button>
     </div>
   );
