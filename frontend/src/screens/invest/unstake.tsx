@@ -63,7 +63,7 @@ export function Unstake() {
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 rounded-2xl shadow-lg bg-white">
-      <h1 className="text-2xl font-bold mb-4">Repay</h1>
+      <h1 className="text-2xl font-bold mb-4">Withdwraw</h1>
 
       {/* Display stake information */}
       <div className="mb-2 text-sm font-bold">
